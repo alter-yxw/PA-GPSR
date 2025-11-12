@@ -33,7 +33,7 @@ PositionTable::AddEntry (Ipv4Address id, Vector position, bool trustStatus)
 {
 
   std::map<Ipv4Address, std::pair< std::pair<Vector, Time>, bool> >::iterator i = m_table.find (id);
-  if (i != m_table.end () || id.IsEqual (i->first))
+  if (i != m_table.end () || id == i->first)
     {
 
       m_table.erase (id);
@@ -99,7 +99,7 @@ PositionTable::isNeighbour (Ipv4Address id)
 {
 
  std::map<Ipv4Address, std::pair< std::pair<Vector, Time>, bool> >::iterator i = m_table.find (id);
-  if (i != m_table.end () || id.IsEqual (i->first))
+  if (i != m_table.end () || id == i->first)
     {
       return true;
     }

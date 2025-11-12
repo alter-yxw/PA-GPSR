@@ -38,7 +38,7 @@ PositionTable::AddEntry (Ipv4Address id, Vector position)
 {
   m_Ttable.AddEntry(id);
   std::map<Ipv4Address, std::pair<Vector, Time> >::iterator i = m_table.find (id);
-  if (i != m_table.end () || id.IsEqual (i->first))
+  if (i != m_table.end () || id == i->first)
     {
       m_table.erase (id);
       m_table.insert (std::make_pair (id, std::make_pair (position, Simulator::Now ())));
@@ -89,7 +89,7 @@ PositionTable::isNeighbour (Ipv4Address id)
 {
 
  std::map<Ipv4Address, std::pair<Vector, Time> >::iterator i = m_table.find (id);
-  if (i != m_table.end () || id.IsEqual (i->first))
+  if (i != m_table.end () || id == i->first)
     {
       return true;
     }

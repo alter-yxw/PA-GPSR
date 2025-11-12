@@ -30,7 +30,7 @@ RTable::AddEntry (Ipv4Address id, Ipv4Address dest)
 
   std::map<Ipv4Address, std::vector< Ipv4Address > >::iterator i = m_rtable.find (id);
 
-  if (i != m_rtable.end () || id.IsEqual (i->first))
+  if (i != m_rtable.end () || id == i->first)
     {
 
       pvector = i->second;
@@ -78,7 +78,7 @@ RTable::FindPacket (Ipv4Address id, Ipv4Address dest)
 
   std::map<Ipv4Address, std::vector< Ipv4Address > >::iterator i = m_rtable.find (id);
 
-  if (i != m_rtable.end () || id.IsEqual (i->first))
+  if (i != m_rtable.end () || id == i->first)
     {
 
       pvector = i->second;

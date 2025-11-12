@@ -26,7 +26,7 @@ TTable::AddEntry (Ipv4Address id)
   Time t_hello_old;
 
   std::map<Ipv4Address, std::pair<Time , Time> >::iterator i = m_Ttable.find (id);
-  if (i != m_Ttable.end () || id.IsEqual (i->first))
+  if (i != m_Ttable.end () || id == i->first)
     {
       T_cum_old = i->second.first;
       t_hello_old = i->second.second;

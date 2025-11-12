@@ -26,7 +26,7 @@ RstTable::AddEntry (Ipv4Address id, std::pair<std::string, std::pair<uint32_t,Ip
 
   std::map<Ipv4Address, std::vector< std::pair<std::string, std::pair<uint32_t,Ipv4Address> > > >::iterator i = m_table_rst.find (id);
 
-  if (i != m_table_rst.end () || id.IsEqual (i->first))
+  if (i != m_table_rst.end () || id == i->first)
     {
 
       pvector = i->second;
@@ -82,7 +82,7 @@ RstTable::FindPacket (Ipv4Address id, std::pair<std::string, std::pair<uint32_t,
 
   std::map<Ipv4Address, std::vector< std::pair<std::string, std::pair<uint32_t,Ipv4Address> > > >::iterator i = m_table_rst.find (id);
 
-  if (i != m_table_rst.end () || id.IsEqual (i->first))
+  if (i != m_table_rst.end () || id == i->first)
     {
 
       pvector = i->second;
