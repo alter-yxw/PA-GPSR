@@ -53,8 +53,8 @@ public:
   //
   Ptr<Ipv4Route> RouteOutput (Ptr<Packet> p, const Ipv4Header &header, Ptr<NetDevice> oif, Socket::SocketErrno &sockerr);
   bool RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
-                   UnicastForwardCallback ucb, MulticastForwardCallback mcb,
-                   LocalDeliverCallback lcb, ErrorCallback ecb);
+                   const UnicastForwardCallback& ucb, const MulticastForwardCallback& mcb,
+                   const LocalDeliverCallback& lcb, const ErrorCallback& ecb);
   virtual void NotifyInterfaceUp (uint32_t interface);
   int GetProtocolNumber (void) const;
   virtual void AddHeaders (Ptr<Packet> p, Ipv4Address source, Ipv4Address destination, uint8_t protocol, Ptr<Ipv4Route> route);
@@ -92,7 +92,7 @@ public:
   void SetDownTarget (IpL4Protocol::DownTargetCallback callback);
   IpL4Protocol::DownTargetCallback GetDownTarget (void) const;
 
-  virtual void PrintRoutingTable (ns3::Ptr<ns3::OutputStreamWrapper>) const
+  virtual void PrintRoutingTable (ns3::Ptr<ns3::OutputStreamWrapper>, ns3::Time::Unit = ns3::Time::S) const
   {
     return;
   }

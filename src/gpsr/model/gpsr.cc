@@ -164,8 +164,8 @@ RoutingProtocol::GetPdr ()
 
 
 bool RoutingProtocol::RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
-                                  UnicastForwardCallback ucb, MulticastForwardCallback mcb,
-                                  LocalDeliverCallback lcb, ErrorCallback ecb)
+                                  const UnicastForwardCallback& ucb, const MulticastForwardCallback& mcb,
+                                  const LocalDeliverCallback& lcb, const ErrorCallback& ecb)
 {
 
 NS_LOG_FUNCTION (this << p->GetUid () << header.GetDestination () << idev->GetAddress ());
