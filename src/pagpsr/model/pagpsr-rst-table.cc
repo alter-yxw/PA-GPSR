@@ -33,7 +33,7 @@ RstTable::AddEntry (Ipv4Address id, std::pair<std::string, std::pair<uint32_t,Ip
 
       std::vector<std::pair<uint32_t, Ipv4Address>> temp_pvector(pvector.size());
 
-      for (int i=0 ; i < pvector.size() ; i++)
+      for (size_t i = 0; i < pvector.size(); i++)
         temp_pvector[i] = pvector[i].second;
 
       auto it = find(temp_pvector.begin(), temp_pvector.end(), m_pair.second);
@@ -89,7 +89,7 @@ RstTable::FindPacket (Ipv4Address id, std::pair<std::string, std::pair<uint32_t,
 
       std::vector<std::pair<uint32_t, Ipv4Address>> temp_pvector(pvector.size());
 
-      for (int i=0 ; i < pvector.size() ; i++)
+      for (size_t i = 0; i < pvector.size(); i++)
         temp_pvector[i] = pvector[i].second;
 
       auto it = find(temp_pvector.begin(), temp_pvector.end(), m_pair.second);

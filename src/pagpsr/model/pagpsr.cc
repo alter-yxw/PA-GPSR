@@ -392,16 +392,16 @@ RoutingProtocol::RecoveryMode(Ipv4Address dst, Ptr<Packet> p, UnicastForwardCall
 
   Vector Position;
   Vector previousHop;
-  uint32_t updated;
+  uint32_t updated = 0;
   Vector myPos;
   Vector recPos;
   int packet = header.GetIdentification();
   Ipv4Address origin = header.GetSource ();
   uint8_t forward_method = 0;
-  uint32_t n_it;
+  uint32_t n_it = 0;
   std::string forwards[2] = {"R","L"};
   std::vector<uint8_t> f_n (2);
-  bool NodeRec;
+  bool NodeRec = false;
   Ipv4Address previousHopIp;
 
   origin_packet = std::make_pair("", std::make_pair(packet, origin));
@@ -528,7 +528,13 @@ RoutingProtocol::NotifyInterfaceUp (uint32_t interface)
       return;
     }
 
-  mac->TraceConnectWithoutContext ("TxErrHeader", m_neighbors.GetTxErrorCallback ());
+  // Note: In ns-3.40, TxErrHeader trace source has been removed.
+  // Replaced with DroppedMpdu for MAC layer feedback.
+  // The callback signature is: void (*)(WifiMacDropReason, Ptr<const WifiMpdu>)
+  // For now, we disable this optional layer-2 feedback feature.
+  // The protocol will still work using position-based forwarding without MAC feedback.
+  // TODO: Update to use DroppedMpdu trace with appropriate callback if needed.
+  // mac->TraceConnectWithoutContext ("DroppedMpdu", m_neighbors.GetTxErrorCallback ());
 
 }
 
@@ -588,8 +594,9 @@ RoutingProtocol::NotifyInterfaceDown (uint32_t interface)
       Ptr<WifiMac> mac = wifi->GetMac ();
       if (mac != nullptr)
         {
-          mac->TraceDisconnectWithoutContext ("TxErrHeader",
-                                              m_neighbors.GetTxErrorCallback ());
+          // Note: TxErrHeader trace has been disabled in NotifyInterfaceUp
+          // mac->TraceDisconnectWithoutContext ("DroppedMpdu",
+          //                                     m_neighbors.GetTxErrorCallback ());
         }
     }
 

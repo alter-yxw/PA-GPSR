@@ -333,18 +333,14 @@ PositionTable::BestRecoveryNeighbor (Ipv4Address previousHopIp, Vector position,
     }     //if table is empty (no neighbours)
 
   Ipv4Address bestFoundID = Ipv4Address::GetZero ();
-  double bestFoundDistance = std::numeric_limits<double>::max();
   double bestFoundAngle_right = 360;
   double bestFoundAngle_left = 0;
   std::pair<bool, std::string> sent;
   double tmpAngle;
   bool right = false;
-  bool left = false;
 
 
-	if(m_pair.first == "L"){
-	    left = true;
-	}else{
+	if(m_pair.first == "R"){
 	    right = true;
 	}
 
