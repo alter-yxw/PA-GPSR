@@ -1,0 +1,25 @@
+--- benchmarktest.cc.original
++++ benchmarktest.cc.fixed
+@@ -263,6 +263,21 @@
+
+   if(appOn)     { InstallApplications (); }
+
++  // PA-GPSR/GPSR/MM-GPSR require additional Install() step
++  // This must be called AFTER InternetStack installation
++  if (algorithm == "pagpsr") {
++    PAGpsrHelper pagpsrHelper;
++    pagpsrHelper.Install();
++    std::cout << "PA-GPSR Install() completed\n";
++  } else if (algorithm == "gpsr") {
++    GpsrHelper gpsrHelper;
++    gpsrHelper.Install();
++    std::cout << "GPSR Install() completed\n";
++  } else if (algorithm == "mmgpsr") {
++    MMGpsrHelper mmgpsrHelper;
++    mmgpsrHelper.Install();
++    std::cout << "MM-GPSR Install() completed\n";
++  }
++
+   m_metrics =  CreateObject<PerformanceMetrics>();
+   m_metrics -> SetNodes(nodes);
+   m_metrics -> SetFlowMonitor(monitor, DynamicCast<Ipv4FlowClassifier>(flowmon.GetClassifier()));
