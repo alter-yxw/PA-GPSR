@@ -13,7 +13,12 @@
 - **NqosWaveMacHelper**: 已被移除,改用 `WifiMacHelper` 并配置为 `OcbWifiMac` 类型
 - **WiFi PHY 配置**: `CcaMode1Threshold` 属性更名为 `CcaEdThreshold`
 
-### 3. 头文件变化
+### 3. Ipv4Address API 变化
+- **Ipv4Address::IsEqual()**: 此方法已被移除，使用 `==` 运算符代替
+  - 旧代码: `if (addr1.IsEqual(addr2))`
+  - 新代码: `if (addr1 == addr2)`
+
+### 4. 头文件变化
 - `#include "ns3/adhoc-wifi-mac.h"` → `#include "ns3/wifi-mac.h"`
 - 移除了 `ocb-wifi-mac.h` 的单独包含(已合并到 wave-mac-helper.h)
 
@@ -163,6 +168,34 @@ WifiMacHelper wifiMac;
 wifiMac.SetType("ns3::OcbWifiMac");
 wifiPhy.Set("CcaEdThreshold", DoubleValue(-64.8));
 ```
+
+### 4. Ipv4Address API 变化
+
+**原代码 (ns-3.27)**:
+```cpp
+// 在 pagpsr-ptable.cc, gpsr-ptable.cc 等文件中
+std::map<Ipv4Address, ...>::iterator i = m_table.find(id);
+if (i != m_table.end() || id.IsEqual(i->first)) {
+    // ...
+}
+```
+
+**新代码 (ns-3.40)**:
+```cpp
+// IsEqual() 方法已被移除，使用 == 运算符
+std::map<Ipv4Address, ...>::iterator i = m_table.find(id);
+if (i != m_table.end() || id == i->first) {
+    // ...
+}
+```
+
+**影响的文件**:
+- `src/pagpsr/model/pagpsr-rtable.cc` (2处)
+- `src/pagpsr/model/pagpsr-rst-table.cc` (2处)
+- `src/pagpsr/model/pagpsr-ptable.cc` (2处)
+- `src/gpsr/model/gpsr-ptable.cc` (2处)
+- `src/mmgpsr/model/mmgpsr-ptable.cc` (2处)
+- `src/mmgpsr/model/mmgpsr-Ttable.cc` (1处)
 
 ## 模块依赖关系
 
