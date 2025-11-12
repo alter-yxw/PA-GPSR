@@ -18,9 +18,8 @@
 #include "ns3/flow-monitor-module.h"
 #include "ns3/netanim-module.h"
 #include "string.h"
-#include "ns3/ocb-wifi-mac.h"
-#include "ns3/wifi-80211p-helper.h"
 #include "ns3/wave-mac-helper.h"
+#include "ns3/wifi-80211p-helper.h"
 #include "ns3/applications-module.h"
 #include <string>
 #include <sys/stat.h>
@@ -392,11 +391,13 @@ wifiChannel.AddPropagationLoss ("ns3::TwoRayGroundPropagationLossModel",
   wifiPhy.Set ("TxGain", DoubleValue(0));
   wifiPhy.Set ("RxGain", DoubleValue(0));
   wifiPhy.Set ("EnergyDetectionThreshold", DoubleValue(-61.8));
-  wifiPhy.Set ("CcaMode1Threshold", DoubleValue(-64.8));
+  wifiPhy.Set ("CcaEdThreshold", DoubleValue(-64.8));
 
  wifiPhy.SetChannel (wifiChannel.Create ());
 
-NqosWaveMacHelper wifiMac = NqosWaveMacHelper::Default ();
+// Configure WAVE MAC in OCB mode for ns-3.40
+WifiMacHelper wifiMac;
+wifiMac.SetType ("ns3::OcbWifiMac");
 
  wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
                                 "DataMode",StringValue(phyMode),

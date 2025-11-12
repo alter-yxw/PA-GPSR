@@ -14,7 +14,7 @@
 #include "ns3/trace-source-accessor.h"
 #include "ns3/udp-socket-factory.h"
 #include "ns3/wifi-net-device.h"
-#include "ns3/adhoc-wifi-mac.h"
+#include "ns3/wifi-mac.h"
 #include "ns3/rng-seed-manager.h"
 #include <algorithm>
 #include <limits>
@@ -529,7 +529,7 @@ RoutingProtocol::NotifyInterfaceDown (uint32_t interface)
   Ptr<WifiNetDevice> wifi = dev->GetObject<WifiNetDevice> ();
   if (wifi != 0)
     {
-      Ptr<WifiMac> mac = wifi->GetMac ()->GetObject<AdhocWifiMac> ();
+      Ptr<WifiMac> mac = wifi->GetMac ();
       if (mac != 0)
         {
           mac->TraceDisconnectWithoutContext ("TxErrHeader",
