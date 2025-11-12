@@ -18,7 +18,15 @@
   - 旧代码: `if (addr1.IsEqual(addr2))`
   - 新代码: `if (addr1 == addr2)`
 
-### 4. 头文件变化
+### 4. Ipv4RoutingProtocol 接口变化
+- **RouteInput 回调参数**: 从值传递改为常量引用传递
+  - 旧代码: `bool RouteInput(..., UnicastForwardCallback ucb, ...)`
+  - 新代码: `bool RouteInput(..., const UnicastForwardCallback& ucb, ...)`
+- **PrintRoutingTable**: 添加了第二个参数 `Time::Unit`
+  - 旧代码: `void PrintRoutingTable(Ptr<OutputStreamWrapper>) const`
+  - 新代码: `void PrintRoutingTable(Ptr<OutputStreamWrapper>, Time::Unit = Time::S) const`
+
+### 5. 头文件变化
 - `#include "ns3/adhoc-wifi-mac.h"` → `#include "ns3/wifi-mac.h"`
 - 移除了 `ocb-wifi-mac.h` 的单独包含(已合并到 wave-mac-helper.h)
 
@@ -196,6 +204,86 @@ if (i != m_table.end() || id == i->first) {
 - `src/gpsr/model/gpsr-ptable.cc` (2处)
 - `src/mmgpsr/model/mmgpsr-ptable.cc` (2处)
 - `src/mmgpsr/model/mmgpsr-Ttable.cc` (1处)
+
+### 5. Ipv4RoutingProtocol 接口变化
+
+ns-3.40 中 `Ipv4RoutingProtocol` 接口发生了变化，导致所有派生类都需要更新。
+
+**问题**: 如果不更新会导致编译错误:
+```
+error: invalid new-expression of abstract class type 'ns3::pagpsr::RoutingProtocol'
+note: because the following virtual functions are pure within 'ns3::pagpsr::RoutingProtocol':
+note: 'virtual bool ns3::Ipv4RoutingProtocol::RouteInput(...)'
+note: 'virtual void ns3::Ipv4RoutingProtocol::PrintRoutingTable(...)'
+```
+
+#### 5.1 RouteInput 方法签名变化
+
+**原代码 (ns-3.27)** - 头文件 (*.h):
+```cpp
+bool RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
+                 UnicastForwardCallback ucb, MulticastForwardCallback mcb,
+                 LocalDeliverCallback lcb, ErrorCallback ecb);
+```
+
+**新代码 (ns-3.40)** - 头文件 (*.h):
+```cpp
+bool RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
+                 const UnicastForwardCallback& ucb, const MulticastForwardCallback& mcb,
+                 const LocalDeliverCallback& lcb, const ErrorCallback& ecb);
+```
+
+**关键变化**: 所有回调参数从值传递改为常量引用传递 (添加 `const` 和 `&`)
+
+**原代码 (ns-3.27)** - 实现文件 (*.cc):
+```cpp
+bool RoutingProtocol::RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
+                                  UnicastForwardCallback ucb, MulticastForwardCallback mcb,
+                                  LocalDeliverCallback lcb, ErrorCallback ecb)
+{
+    // 实现...
+}
+```
+
+**新代码 (ns-3.40)** - 实现文件 (*.cc):
+```cpp
+bool RoutingProtocol::RouteInput (Ptr<const Packet> p, const Ipv4Header &header, Ptr<const NetDevice> idev,
+                                  const UnicastForwardCallback& ucb, const MulticastForwardCallback& mcb,
+                                  const LocalDeliverCallback& lcb, const ErrorCallback& ecb)
+{
+    // 实现...
+}
+```
+
+#### 5.2 PrintRoutingTable 方法签名变化
+
+**原代码 (ns-3.27)**:
+```cpp
+virtual void PrintRoutingTable (ns3::Ptr<ns3::OutputStreamWrapper>) const
+{
+  return;
+}
+```
+
+**新代码 (ns-3.40)**:
+```cpp
+virtual void PrintRoutingTable (ns3::Ptr<ns3::OutputStreamWrapper>, ns3::Time::Unit = ns3::Time::S) const
+{
+  return;
+}
+```
+
+**关键变化**: 添加了第二个参数 `Time::Unit`，默认值为 `Time::S`
+
+**影响的文件**:
+- `src/pagpsr/model/pagpsr.h` (RouteInput 声明, PrintRoutingTable 声明)
+- `src/pagpsr/model/pagpsr.cc` (RouteInput 实现)
+- `src/gpsr/model/gpsr.h` (RouteInput 声明, PrintRoutingTable 声明)
+- `src/gpsr/model/gpsr.cc` (RouteInput 实现)
+- `src/mmgpsr/model/mmgpsr.h` (RouteInput 声明, PrintRoutingTable 声明)
+- `src/mmgpsr/model/mmgpsr.cc` (RouteInput 实现)
+
+**注意**: 所有三个路由协议 (PA-GPSR, GPSR, MM-GPSR) 都需要同样的修改。
 
 ## 模块依赖关系
 
